@@ -154,9 +154,11 @@ class Tokenizer:
         # Move on with life
 
         # Deal with specific tag logic
+
         if (_tag_is(element, 'del') and first_layer is False) \
-                or ((_tag_is(element, 'add') or _tag_is(element, 'mod'))
-                    and first_layer is True) or _tag_is(element, 'note') or _tag_is(element, 'fw'):
+                or ((_tag_is(element, 'add') or _tag_is(element, 'mod')) \
+                    and first_layer is True) or _tag_is(element, 'note') or _tag_is(element, 'fw') \
+                or (_tag_is(element.getparent(), 'choice') and _tag_is(element, 'abbr')): #VS
             # If we are looking at a del tag for the final layer, or an add/mod tag for the
             # first layer, discard all the tokens we just got.
             tokens = []
