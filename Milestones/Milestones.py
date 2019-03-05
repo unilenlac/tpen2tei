@@ -63,10 +63,12 @@ def expand_abbr(input_str):
 def normalise(token):
     if token["n"] is None:
         token["n"] = token["t"]
-    token["n"] = lowercase_noacc_nopunct(token["n"]);
+    token["n"] = lowercase_noacc_nopunct(token["n"])
     #token["n"] = remove_diacritics(token["t"]);
     #if abbr
     token["n"] = expand_abbr(token["n"])
+    # now, normalise the expansion!
+    token["n"] = lowercase_noacc_nopunct(token["n"]);
 
     #avoid Empty token error in CollateX
     if (token["n"] == ""):
