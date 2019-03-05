@@ -71,6 +71,8 @@ def normalise(token):
     #avoid Empty token error in CollateX
     if (token["n"] == ""):
         token["n"] = " "
+
+    token['normal_form'] = token['n'] # create a copy in 'normal_form' for Stemmaweb, because the latter ignores 'n'
     return token
 
 def display_char_names(input_str):
