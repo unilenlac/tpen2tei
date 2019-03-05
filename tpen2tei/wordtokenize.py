@@ -384,7 +384,7 @@ if __name__ == '__main__':
         xmlfiles = sys.argv[2:]
     else:
         xmlfiles = sys.argv[1:]
-    tok = Tokenizer(milestone=textms, first_layer=True)
+    tok = Tokenizer(milestone=textms, first_layer=False, id_xpath="//t:msDesc/@xml:id")
     for fn in xmlfiles:
         result = tok.from_file(fn)
         if len(result):
