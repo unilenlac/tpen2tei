@@ -32,7 +32,7 @@ class Tokenizer:
     punctuation = None
     normalisation = None
     id_xpath = None
-    block_xpath = './/t:p | .//t:ab'
+    block_xpath = './/t:p | .//t:ab | .//t:div'
     xml_doc = None
 
     def __init__(self, milestone=None, first_layer=False, punctuation=None, normalisation=None, id_xpath=None, block_xpath=None):
