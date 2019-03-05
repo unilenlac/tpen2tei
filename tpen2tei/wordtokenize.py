@@ -220,6 +220,9 @@ class Tokenizer:
         # Get rid of any final empty tokens, if there are preceding tokens.
         if len(tokens) > 1 and _is_blank(tokens[-1]):
             tokens.pop()
+
+        for t in tokens:
+            t['t'] = t['lit'] # VS: preserve XML around
         return tokens
 
     def _split_text_node(self, context, tnode, tokens):
