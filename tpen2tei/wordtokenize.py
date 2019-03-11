@@ -109,10 +109,30 @@ class Tokenizer:
     def _find_words(self, element, first_layer=False):
         """Detect word boundaries and add an anchor to each."""
         tokens = []
-        # First handle the text of the element, if any
-        if element.tag is not etree.Comment and element.text is not None:
-            self._split_text_node(element, element.text, tokens)
 
+        treatAsSingleton = _tag_is(element, 'subst') or \
+            _tag_is(element, 'add') or \
+            _tag_is(element, 'del') or \
+            _tag_is(element, 'handShift') or \
+            _tag_is(element, 'choice') or \
+            _tag_is(element, 'abbr') or \
+            _tag_is(element, 'seg') or \
+            (_tag_is(element, 'unclear'))
+
+        # First handle the text of the element, if any
+        if element.tag is not etree.Comment:
+            if treatAsSingleton:
+                if self.INMILESTONE:
+                    mycontent = _shortform(etree.tostring(element, encoding='unicode', with_tail=False))
+                    mytoken = {'t': mycontent, 'n': mycontent, 'lit': mycontent}
+                    if element.text is not None:
+                        mytoken['n'] = element.text
+                    tokens.append(mytoken)
+            elif element.text is not None:
+                #handle the text of the element, if any, as separate nodes
+                self._split_text_node(element, element.text, tokens)
+
+<<<<<<< HEAD
         # Next handle the child elements of this one, if any.
         for child in element:
             child_tokens = self._find_words(child, first_layer)
@@ -139,6 +159,43 @@ class Tokenizer:
                     pass
             # Add the remaining tokens onto our list.
             tokens.extend(child_tokens)
+=======
+        # Now tokens has only the tokenized contents of the element itself.
+        # If there is a single token, then we 'lit' the entire element and will use the
+        # parent context below.
+        singlewordelement = False
+        if len(tokens) == 1 and len(element) == 0:
+            tokens[0]['lit'] = _shortform(etree.tostring(element, encoding='unicode', with_tail=False))
+            singlewordelement = True
+
+        if not treatAsSingleton:
+            # Next handle the child elements of this one, if any.
+            for child in element:
+                child_tokens = self._find_words(child, first_layer)
+                if len(child_tokens) == 0:
+                    continue
+                if len(tokens) and 'continue' in tokens[-1]:
+                    # Try to combine the last of these with the first child token.
+                    combolit = "<word>%s</word>" % (tokens[-1]['lit'] + child_tokens[0]['lit'])
+                    try:
+                        etree.fromstring(combolit)
+                        # If this didn't cause an exception, merge the tokens
+                        prior = tokens[-1]
+                        partial = child_tokens.pop(0)
+                        prior['t'] += partial['t']
+                        prior['n'] += partial['n']
+                        # Now figure out 'lit'. Did the child have children?
+                        if child.text is None and len(child) == 0:
+                            # It's a milestone element. Stick it into 'lit'.
+                            prior['lit'] += _shortform(etree.tostring(child, encoding='unicode', with_tail=False))
+                        prior['lit'] += partial['lit']
+                        if 'continue' not in partial:
+                            del prior['continue']
+                    except etree.XMLSyntaxError:
+                        pass
+                # Add the remaining tokens onto our list.
+                tokens.extend(child_tokens)
+>>>>>>> XML rich tokens (no decomposition)
 
         # Now we handle our tag-specific logic, after the child text and child tags
         # have been processed but before the tail is processed.
