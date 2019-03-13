@@ -140,6 +140,21 @@ class Tokenizer:
                     mytoken = {'t': mycontent, 'n': mycontent, 'lit': mycontent}
                     if element.text is not None:
                         mytoken['n'] = element.text
+
+                    # Take care of 'n' on a tag by tag basis
+                    # CHOICE: use content of SUPPLIED child (! with the highest '@cert' value)
+                    if _tag_is(element, 'choice'):
+                        certRank = ''; suppliedYet = False
+                        for child in element:
+                            if _tag_is(child, 'supplied') and child.text is not None:
+                                newCertRank = child.get('cert')
+                                higherExist = newCertRank is not None and higherCertRank(newCertRank, certRank)
+                                if not suppliedYet or higherExist:
+                                    mytoken['n'] = child.text
+                                    suppliedYet = True
+                                    if higherExist:
+                                        certRank = newCertRank
+
                     tokens.append(mytoken)
             elif element.text is not None:
                 #handle the text of the element, if any, as separate nodes
@@ -452,6 +467,9 @@ def tokens_to_string(tokenlist, field="t"):
         joining = t.get('join_next', False)
     return tstr
 
+def higherCertRank(rank1, rank2):
+    orderedScale = ['', 'LOW', 'MEDIUM', 'HIGH']
+    return orderedScale.index(rank1.upper()) > orderedScale.index(rank2.upper())
 
 if __name__ == '__main__':
     witness_array = []
