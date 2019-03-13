@@ -110,14 +110,27 @@ class Tokenizer:
         """Detect word boundaries and add an anchor to each."""
         tokens = []
 
-        treatAsSingleton = _tag_is(element, 'subst') or \
+        # special treatment: which tags?
+        treatAsSingleton = (\
+            _tag_is(element, 'abbr') or \
             _tag_is(element, 'add') or \
+            _tag_is(element, 'choice') or \
             _tag_is(element, 'del') or \
             _tag_is(element, 'handShift') or \
-            _tag_is(element, 'choice') or \
-            _tag_is(element, 'abbr') or \
+            _tag_is(element, 'note') or \
             _tag_is(element, 'seg') or \
-            (_tag_is(element, 'unclear'))
+            _tag_is(element, 'subst') or \
+            _tag_is(element, 'unclear'));
+
+        # special treatment: confirm on a tag by tag basis depending on details
+        # ADD: if hand is one of 'manus...', then default treatment
+        if _tag_is(element, 'add') and element.get('hand') and 'manus' in element.get('hand'):
+            treatAsSingleton = False
+
+        # # SUBST: if there is no 'type' attribute, then treat as ADD
+        # elif _tag_is(element, 'subst') and element.get('type') is None:
+        #     # TODO: and \ (add child not element.get('hand') or ('manus' in element.get('hand'))):
+        #     treatAsSingleton = False
 
         # First handle the text of the element, if any
         if element.tag is not etree.Comment:
