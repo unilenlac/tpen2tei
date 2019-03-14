@@ -154,6 +154,12 @@ class Tokenizer:
                                     suppliedYet = True
                                     if higherExist:
                                         certRank = newCertRank
+                    #SUBST: use content of ADD child
+                    elif _tag_is(element, 'subst'):
+                        for child in element:
+                            if _tag_is(child, 'add') and child.get('hand') and 'manus' in child.get('hand'):
+                                mytoken['n'] = child.text
+                                break
 
                     tokens.append(mytoken)
             elif element.text is not None:
