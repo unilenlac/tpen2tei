@@ -293,6 +293,9 @@ class Tokenizer:
         # Finally handle the tail text of this element, if any.
         # Our XML context is now the element's parent.
         if element.tail is not None:
+            # If tail text follows directly without space, then it must be joined to previous token
+            if len(tokens) and not element.tail[0].isspace():
+                 tokens[-1]['continue'] = True
             # Strip any insignificant whitespace from the tail.
             tnode = element.tail
             if re.match('.*\}[clp]b$', str(element.tag)):
