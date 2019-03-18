@@ -127,10 +127,14 @@ class Tokenizer:
         if _tag_is(element, 'add') and element.get('hand') and 'manus' in element.get('hand'):
             treatAsSingleton = False
 
-        # # SUBST: if there is no 'type' attribute, then treat as ADD
-        # elif _tag_is(element, 'subst') and element.get('type') is None:
-        #     # TODO: and \ (add child not element.get('hand') or ('manus' in element.get('hand'))):
-        #     treatAsSingleton = False
+        # SUBST: if there is no 'type' attribute, then treat as ADD
+        elif _tag_is(element, 'subst') and not element.get('type'):
+            for child in element:
+                if _tag_is(child, 'add') \
+                        and child.get('hand') \
+                        and 'manus' in child.get('hand'):
+                    treatAsSingleton = False
+                    break
 
         # First handle the text of the element, if any
         if element.tag is not etree.Comment:
