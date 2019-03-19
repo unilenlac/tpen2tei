@@ -164,6 +164,15 @@ class Tokenizer:
                             if _tag_is(child, 'add') and child.get('hand') and 'manus' in child.get('hand'):
                                 mytoken['n'] = child.text
                                 break
+                    #UNCLEAR: if no alternative is supplied, add as many '?' placeholders as there are missing chars
+                    elif _tag_is(element, 'unclear'):
+                        #if parent is not CHOICE
+                        if not _tag_is(element.getparent(), 'choice'):
+                            replacementChar = '␣'
+                            counterReplacementChar = 1
+                            if element.get('quantity'):
+                                counterReplacementChar = int(element.get('quantity'))
+                            mytoken['n'] = replacementChar * counterReplacementChar
 
                     tokens.append(mytoken)
             elif element.text is not None:
