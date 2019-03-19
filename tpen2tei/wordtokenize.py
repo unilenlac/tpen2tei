@@ -321,10 +321,10 @@ class Tokenizer:
         if len(tokens) > 1 and _is_blank(tokens[-1]):
             tokens.pop()
 
-        for t in tokens:
-            t['t'] = t['lit'] # VS: preserve XML around
-            # if 'join_next' not in t:
-            #     t['t'] += ' '  # VS: insert space for CollateX when running without tokeniser (-t)
+        if treatAsSingleton:
+            for t in tokens:
+                # preserve XML around
+                t['t'] = t['lit']
 
         return tokens
 
