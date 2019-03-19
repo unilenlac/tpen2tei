@@ -160,8 +160,11 @@ class Tokenizer:
                     #SUBST: use content of ADD child
                     elif _tag_is(element, 'subst'):
                         for child in element:
-                            if _tag_is(child, 'add') and child.get('hand') and 'manus' in child.get('hand'):
-                                mytoken['n'] = child.text
+                            if _tag_is(child, 'add') and child.get('hand'):
+                                if 'manus' in child.get('hand'):
+                                    mytoken['n'] = child.text
+                                if 'corr' in child.get('hand'):
+                                    mytoken['n'] = '[' + child.text + ']'
                                 break
                     #UNCLEAR: if no alternative is supplied, add as many '?' placeholders as there are missing chars
                     elif _tag_is(element, 'unclear'):
