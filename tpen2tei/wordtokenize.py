@@ -308,12 +308,21 @@ class Tokenizer:
             if 'context' not in t:
                 t['context'] = context
 
+        # Conditionally join tail text.
+        # Skip next siblings until text tail is found
+        tempSkip = element
+        while tempSkip.tail is None and tempSkip.getnext() is not None:
+            tempSkip = tempSkip.getnext()
+
+        # If tail text follows directly without space, then it must be joined to previous token (intraword operation)
+        if tempSkip.tail is not None:
+            if len(tokens) and not tempSkip.tail[0].isspace():
+                 tokens[-1]['continue'] = True
+
+
         # Finally handle the tail text of this element, if any.
         # Our XML context is now the element's parent.
         if element.tail is not None:
-            # If tail text follows directly without space, then it must be joined to previous token
-            if len(tokens) and not element.tail[0].isspace():
-                 tokens[-1]['continue'] = True
             # Strip any insignificant whitespace from the tail.
             tnode = element.tail
             if re.match('.*\}[clp]b$', str(element.tag)):
