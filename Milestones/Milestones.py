@@ -79,7 +79,7 @@ def normalise(token):
 
 def display_char_names(input_str):
     for c in input_str:
-        print(unicodedata.name(c))
+        print(unicodedata.name(c) + " ; category:" + unicodedata.category(c) + "; is punctuation: " + str(is_punctuation(c)))
 
 # # Tests
 # print(string.punctuation)
@@ -95,6 +95,12 @@ def display_char_names(input_str):
 # print(remove_diacritics(remove_punct("ἐπ᾽αὐτὸν")))
 # #
 # display_char_names("ἐπ᾽αὐτὸν·")
+# print("Testing")
+# print(normalise({'t':'δι’'}))
+# display_char_names("δι’")
+# MIDDLE DOT ; category:Po; is punctuation: True
+# {'t': 'δι’', 'n': 'δι', 'normal_form': 'δι'}
+# RIGHT SINGLE QUOTATION MARK ; category:Pf; is punctuation: True
 
 
 # ωμολογει
