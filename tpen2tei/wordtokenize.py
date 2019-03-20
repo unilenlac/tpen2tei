@@ -84,8 +84,13 @@ class Tokenizer:
 
         # For each paragraph-like block remaining in the text, break it up into words.
         blocks = thetext.xpath(self.block_xpath, namespaces=ns)
+        seenBlocks = []
         for block in blocks:
+            if block.getparent() is not None and block.getparent() in seenBlocks:
+                continue
+            seenBlocks.append(block)
             tokens.extend(self._find_words(block, self.first_layer))
+
         # Back to the top level: remove any empty tokens that were left over
         # in case they were needed to close a seemingly incomplete word.
         tokens = [t for t in tokens if not _is_blank(t)]
