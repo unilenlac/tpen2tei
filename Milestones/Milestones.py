@@ -61,8 +61,9 @@ def expand_abbr(input_str):
     return input_str
 
 def normalise(token):
-    if token["n"] is None:
-        token["n"] = token["t"]
+    if not 'n' in token or token["n"] is None:
+        if 't' in token:
+            token["n"] = token["t"]
     token["n"] = lowercase_noacc_nopunct(token["n"])
     #token["n"] = remove_diacritics(token["t"]);
     #if abbr
