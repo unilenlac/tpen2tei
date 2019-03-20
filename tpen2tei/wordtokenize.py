@@ -141,7 +141,7 @@ class Tokenizer:
                 if self.INMILESTONE:
                     mycontent = _shortform(etree.tostring(element, encoding='unicode', with_tail=False))
                     mytoken = {'t': mycontent, 'n': mycontent, 'lit': mycontent}
-                    if element.text is not None:
+                    if element.text is not None and len(element.text.strip()):
                         mytoken['n'] = element.text
 
                     # Take care of 'n' on a tag by tag basis
