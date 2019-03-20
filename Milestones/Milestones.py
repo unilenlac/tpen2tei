@@ -44,7 +44,7 @@ def remove_diacritics(input_str):
     return u"".join([c for c in output_str  if not unicodedata.combining(c)])
 
 def is_punctuation(input_char):
-    return unicodedata.category(input_char) == "Po" # 	Punctuation, Other
+    return unicodedata.category(input_char).startswith('P')
 
 def remove_punct(input_str):
     return u"".join([c for c in input_str if not is_punctuation(c)])
