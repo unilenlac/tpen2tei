@@ -121,6 +121,7 @@ class Tokenizer:
             _tag_is(element, 'add') or \
             _tag_is(element, 'choice') or \
             _tag_is(element, 'del') or \
+            _tag_is(element, 'handShift') or \
             _tag_is(element, 'note') or \
             _tag_is(element, 'seg') or \
             _tag_is(element, 'subst') or \
