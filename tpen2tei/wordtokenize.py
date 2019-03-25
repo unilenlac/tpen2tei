@@ -180,6 +180,11 @@ class Tokenizer:
                             if element.get('quantity'):
                                 counterReplacementChar = int(element.get('quantity'))
                             mytoken['n'] = replacementChar * counterReplacementChar
+                    #ADD: use content and conditionally mark it (depending on hand)
+                    elif _tag_is(element, 'add'):
+                        if element.get('hand') is not None:
+                            if not 'manus' in element.get('hand'):
+                                mytoken['n'] = getText(element)
 
                     tokens.append(mytoken)
             elif element.text is not None:
@@ -508,6 +513,16 @@ def tokens_to_string(tokenlist, field="t"):
 def higherCertRank(rank1, rank2):
     orderedScale = ['', 'LOW', 'MEDIUM', 'HIGH']
     return orderedScale.index(rank1.upper()) > orderedScale.index(rank2.upper())
+
+def getText(element):
+    text = element.text
+    if text is None:
+        for child in element:
+            if child.tail is not None and len(child.tail):
+                text = child.tail
+                break
+    return text
+
 
 if __name__ == '__main__':
     witness_array = []
