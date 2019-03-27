@@ -327,12 +327,10 @@ class Tokenizer:
         tempSkip = element
         while tempSkip.tail is None and tempSkip.getnext() is not None:
             tempSkip = tempSkip.getnext()
-
         # If tail text follows directly without space, then it must be joined to previous token (intraword operation)
         if tempSkip.tail is not None:
             if len(tokens) and not tempSkip.tail[0].isspace():
                  tokens[-1]['continue'] = True
-
 
         # Finally handle the tail text of this element, if any.
         # Our XML context is now the element's parent.
@@ -367,7 +365,7 @@ class Tokenizer:
         # Filter out any blank spaces at the end (but not at the beginning! We may need the
         # empty token to close out a 'continue' token that ends the outer layer.)
         join_last = True
-        if words[-1] == '':
+        if words[-1] == '' and len(tnode.strip("\t\n")) > 0:
             words.pop()
             join_last = False
         # If we are splitting punctuation into separate tokens then we have to iterate through
