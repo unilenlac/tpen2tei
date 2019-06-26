@@ -97,16 +97,6 @@ def display_char_names(input_str):
 # print(remove_diacritics(remove_punct("ῳ")))
 # print(remove_diacritics(remove_punct("ᾦ")))
 # print(remove_diacritics(remove_punct("ἐπ᾽αὐτὸν")))
-# #
-# display_char_names("ἐπ᾽αὐτὸν·")
-# print("Testing")
-# print(normalise({'t':'δι’'}))
-# display_char_names("δι’")
-# MIDDLE DOT ; category:Po; is punctuation: True
-# {'t': 'δι’', 'n': 'δι', 'normal_form': 'δι'}
-# RIGHT SINGLE QUOTATION MARK ; category:Pf; is punctuation: True
-
-
 # ωμολογει
 # βασιλειαν
 # hebraice
@@ -116,3 +106,24 @@ def display_char_names(input_str):
 # ωι
 # ωι
 # επ αυτον
+
+# #
+# display_char_names("ἐπ᾽αὐτὸν·")
+# # GREEK KORONIS ; category:Sk; is punctuation: False
+# # print("Testing")
+# # print(normalise({'t':'δι’'}))
+# display_char_names("δι’")
+# RIGHT SINGLE QUOTATION MARK ; category:Pf; is punctuation: True
+# MIDDLE DOT ; category:Po; is punctuation: True
+# {'t': 'δι’', 'n': 'δι', 'normal_form': 'δι'}
+# RIGHT SINGLE QUOTATION MARK ; category:Pf; is punctuation: True
+# print(remove_diacritics(remove_punct("ἐπ᾽αὐτὸν")))
+# επ αυτον
+# print(remove_diacritics(remove_punct("δι’")))
+# display_char_names("ἐφ’ἐστῶτα")
+# ...
+# RIGHT SINGLE QUOTATION MARK ; category:Pf; is punctuation: True
+
+# print(lowercase_noacc_nopunct("ἐπ᾽αὐτὸν·"))
+# επ αυτον
+print(lowercase_noacc_nopunct("ἐφ’ἐστῶτα"))
