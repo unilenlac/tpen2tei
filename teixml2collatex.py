@@ -69,9 +69,13 @@ def teixml2collatex(milestone, indir, verbose, configmod):
                 print('skipping unfinished witness %s' % witness_name)
             continue
 
+        # print("Witness: " + infile)
         witness = extract_witness(indir + '/' + infile, milestone, normalise(configmod))
 
         if witness is not None and witness.get('tokens'):
+            # for t in witness.get('tokens'):
+            #     print(t)
+            #     print(len(t['t']))
             witnesses.append(witness)
             logging.info ('milestone <%s> found in witness file <%s>' % (
                 milestone,
