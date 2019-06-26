@@ -126,4 +126,5 @@ def display_char_names(input_str):
 
 # print(lowercase_noacc_nopunct("ἐπ᾽αὐτὸν·"))
 # επ αυτον
-print(lowercase_noacc_nopunct("ἐφ’ἐστῶτα"))
+# print(lowercase_noacc_nopunct("ἐφ’ἐστῶτα"))
+# εφεστωτα
