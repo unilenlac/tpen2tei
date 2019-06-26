@@ -66,10 +66,13 @@ def normalise(token):
             token["n"] = token["t"]
     token["n"] = lowercase_noacc_nopunct(token["n"])
     #token["n"] = remove_diacritics(token["t"]);
+
     #if abbr
-    token["n"] = expand_abbr(token["n"])
-    # now, normalise the expansion!
-    token["n"] = lowercase_noacc_nopunct(token["n"]);
+
+    if (token["t"] is not None) and ('<abbr ' in token["t"]):
+        token["n"] = expand_abbr(token["n"])
+        # now, normalise the expansion!
+        token["n"] = lowercase_noacc_nopunct(token["n"]);
 
     #avoid Empty token error in CollateX
     if (token["n"] == ""):
