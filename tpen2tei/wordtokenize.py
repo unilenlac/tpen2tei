@@ -275,6 +275,7 @@ class Tokenizer:
         # Deal with specific tag logic
 
         if (_tag_is(element, 'del') and first_layer is False) \
+        if (_tag_is(element, 'del') and (_tag_is(element.getparent(), 'subst')) and first_layer is False) \
                 or ((_tag_is(element, 'add') or _tag_is(element, 'mod')) \
                     and first_layer is True) or _tag_is(element, 'fw') \
                 or (_tag_is(element.getparent(), 'choice') and _tag_is(element, 'abbr')): #VS
