@@ -147,7 +147,7 @@ class Tokenizer:
                 if self.INMILESTONE:
                     mycontent = _shortform(etree.tostring(element, encoding='unicode', with_tail=False))
                     mytoken = {'t': mycontent, 'n': mycontent, 'lit': mycontent}
-                    if _tag_is(element, 'note'):
+                    if _tag_is(element, 'note') or _tag_is(element, 'del'):
                         mytoken['n'] = ''
                     elif element.text is not None and len(element.text.strip()):
                         mytoken['n'] = element.text
@@ -274,7 +274,6 @@ class Tokenizer:
 
         # Deal with specific tag logic
 
-        if (_tag_is(element, 'del') and first_layer is False) \
         if (_tag_is(element, 'del') and (_tag_is(element.getparent(), 'subst')) and first_layer is False) \
                 or ((_tag_is(element, 'add') or _tag_is(element, 'mod')) \
                     and first_layer is True) or _tag_is(element, 'fw') \
