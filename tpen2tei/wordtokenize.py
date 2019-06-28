@@ -147,48 +147,7 @@ class Tokenizer:
                 if self.INMILESTONE:
                     mycontent = _shortform(etree.tostring(element, encoding='unicode', with_tail=False))
                     mytoken = {'t': mycontent, 'n': mycontent, 'lit': mycontent}
-                    if _tag_is(element, 'note') or _tag_is(element, 'del'):
-                        mytoken['n'] = ''
-                    elif element.text is not None and len(element.text.strip()):
-                        mytoken['n'] = element.text
-
-                    # Take care of 'n' on a tag by tag basis
-                    # CHOICE: use content of SUPPLIED child (! with the highest '@cert' value)
-                    if _tag_is(element, 'choice'):
-                        certRank = ''; suppliedYet = False
-                        for child in element:
-                            if _tag_is(child, 'supplied') and child.text is not None:
-                                newCertRank = child.get('cert')
-                                higherExist = newCertRank is not None and higherCertRank(newCertRank, certRank)
-                                if not suppliedYet or higherExist:
-                                    mytoken['n'] = child.text
-                                    suppliedYet = True
-                                    if higherExist:
-                                        certRank = newCertRank
-                    #SUBST: use content of ADD child
-                    elif _tag_is(element, 'subst'):
-                        for child in element:
-                            if _tag_is(child, 'add') and child.get('hand'):
-                                if 'manus' in child.get('hand'):
-                                    mytoken['n'] = child.text
-                                if 'corr' in child.get('hand'):
-                                    mytoken['n'] = '[' + child.text + ']'
-                                break
-                    #UNCLEAR: if no alternative is supplied, add as many '?' placeholders as there are missing chars
-                    elif _tag_is(element, 'unclear'):
-                        #if parent is not CHOICE
-                        if not _tag_is(element.getparent(), 'choice'):
-                            replacementChar = '␣'
-                            counterReplacementChar = 1
-                            if element.get('quantity'):
-                                counterReplacementChar = int(element.get('quantity'))
-                            mytoken['n'] = replacementChar * counterReplacementChar
-                    #ADD: use content and conditionally mark it (depending on hand)
-                    elif _tag_is(element, 'add'):
-                        if element.get('hand') is not None:
-                            if not 'manus' in element.get('hand'):
-                                mytoken['n'] = getText(element)
-
+                    mytoken['n'] = getSingletonNormalForm(element)
                     tokens.append(mytoken)
             elif element.text is not None:
                 #handle the text of the element, if any, as separate nodes
@@ -523,6 +482,73 @@ def getText(element):
                 text = child.tail
                 break
     return text
+
+def getSingletonNormalForm(element):
+    output = ''
+    mycontent = _shortform(etree.tostring(element, encoding='unicode', with_tail=False))
+    if _tag_is(element, 'note') \
+        or _tag_is(element, 'del') \
+        or _tag_is(element, 'lb') \
+        or _tag_is(element, 'cb') \
+        or _tag_is(element, 'pb'):
+
+        return ''
+
+    if _tag_is(element, 'num') and element.get('value'):
+            return element.get('value')
+
+    if element.text is not None and len(element.text.strip()):
+         output = element.text
+         if len(element) == 0:
+             return output
+
+    # CHOICE: use content of SUPPLIED child (! with the highest '@cert' value)
+    if _tag_is(element, 'choice'):
+        certRank = ''; suppliedYet = False
+        for child in element:
+            if _tag_is(child, 'supplied'):
+                newCertRank = child.get('cert')
+                higherExist = newCertRank is not None and higherCertRank(newCertRank, certRank)
+                if not suppliedYet or higherExist:
+                    output = getSingletonNormalForm(child)
+                    suppliedYet = True
+                    if higherExist:
+                        certRank = newCertRank
+
+            if _tag_is(child, 'sic'):
+                return getSingletonNormalForm(child)
+        return output
+
+    #SUBST: use content of ADD child
+    elif _tag_is(element, 'subst'):
+        for child in element:
+            if _tag_is(child, 'add') and child.get('hand'):
+                if 'manus' in child.get('hand'):
+                    return getSingletonNormalForm(child)
+                if 'corr' in child.get('hand'):
+                    return '[' + getSingletonNormalForm(child) + ']'
+                break
+
+    #UNCLEAR: if no alternative is supplied, add as many '?' placeholders as there are missing chars
+    elif _tag_is(element, 'unclear'):
+        #if parent is not CHOICE
+        if not _tag_is(element.getparent(), 'choice'):
+            replacementChar = '␣'
+            counterReplacementChar = 1
+            if element.get('quantity'):
+                counterReplacementChar = int(element.get('quantity'))
+            return replacementChar * counterReplacementChar
+
+    else:
+        # recursive treatment
+        for child in element:
+            output = output + getSingletonNormalForm(child)
+            if child.tail:
+                output = output + child.tail.strip()
+        if len(output):
+            return output
+
+    return mycontent
 
 
 if __name__ == '__main__':
