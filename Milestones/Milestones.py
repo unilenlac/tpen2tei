@@ -2,9 +2,8 @@ import unicodedata
 import csv, string
 
 # MILESTONES
-# Todo: Read file
-milestones = ["titre", "1", "2"]
-milestone_file = "/Users/vseretan/Documents/data/milestones.csv"
+milestones = []
+milestone_file = "milestones.csv"
 
 try:
     with open(milestone_file, 'rt', encoding='utf-8-sig') as csvfile: #sig <-> BOM
@@ -12,7 +11,7 @@ try:
         reader = csv.reader(csvfile)
         for row in reader:
             milestones.extend(row)
-    print("Milestones:")
+    print("Milestones (" + str(len(milestones)) + "):") 
     print(milestones)
 except EnvironmentError:
     print("ERROR File Not Found: %s" % milestone_file)
