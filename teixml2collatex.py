@@ -100,7 +100,9 @@ def teixml2collatex(milestone, indir, verbose, configmod):
     # warn and exclude if one of the witnesses seems weirdly longer than
     # the others; it probably indicates a missing milestone marker and can
     # cause SVG generation to hang.
-    msmedian = statistics.median(mslength)
+    msmedian = 0
+    if mslength:
+        msmedian = statistics.median(mslength)
     collation = {"witnesses": []}
     for wit in witnesses:
         if len(wit.get('tokens')) > msmedian + 800:
