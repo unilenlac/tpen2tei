@@ -11,14 +11,14 @@ try:
         reader = csv.reader(csvfile)
         for row in reader:
             milestones.extend(row)
-    print("Milestones (" + str(len(milestones)) + "):") 
+    print("Milestones (" + str(len(milestones)) + "):")
     print(milestones)
 except EnvironmentError:
     print("ERROR File Not Found: %s" % milestone_file)
 
 
 # ABBREVIATIONS
-abbr_file = "/Users/vseretan/Documents/data/tableau.csv"
+abbr_file = "abbr.csv"
 abbr_table = []
 
 with open(abbr_file, 'rt', encoding='utf-8-sig') as csvfile: #sig <-> BOM
