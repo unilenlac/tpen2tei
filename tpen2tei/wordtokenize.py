@@ -147,7 +147,7 @@ class Tokenizer:
             if treatAsSingleton:
                 if self.INMILESTONE:
                     mycontent = _shortform(etree.tostring(element, encoding='unicode', with_tail=False))
-                    mytoken = {'t': mycontent, 'n': mycontent, 'lit': mycontent}
+                    mytoken = _make_token(element, mycontent, None);
                     mytoken['n'] = getSingletonNormalForm(element)
                     tokens.append(mytoken)
             elif element.text is not None:
