@@ -21,14 +21,17 @@ except EnvironmentError:
 abbr_file = "abbr.csv"
 abbr_table = []
 
-with open(abbr_file, 'rt', encoding='utf-8-sig') as csvfile: #sig <-> BOM
-    reader = csv.DictReader(csvfile, delimiter = '\t')
-    for row in reader:
-        abbr_table.append(row)
-    print("Found " + str(len(abbr_table)) + " entries in the abbreviation expansion table (" + abbr_file + ")")
+try:
+    with open(abbr_file, 'rt', encoding='utf-8-sig') as csvfile: #sig <-> BOM
+        reader = csv.DictReader(csvfile, delimiter = '\t')
+        for row in reader:
+            abbr_table.append(row)
+        print("Found " + str(len(abbr_table)) + " entries in the abbreviation expansion table (" + abbr_file + ")")
 
-    string = "".join(item['abbr'] + "->" + item['expan'] + "\n" for item in abbr_table) #item['abbr'] + "->" + item['expan']
-    #print(string)
+        string = "".join(item['abbr'] + "->" + item['expan'] + "\n" for item in abbr_table) #item['abbr'] + "->" + item['expan']
+        #print(string)
+except IOError:
+    print("Warning: No abreviation-expansion file found (Expected file: <" + abbr_file + ">). Proceeding without...");
 
 def remove_diacritics(input_str):
     #nfkd_form = unicodedata.normalize('NFKD', input_str)
