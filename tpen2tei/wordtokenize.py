@@ -323,7 +323,7 @@ class Tokenizer:
         if not self.INMILESTONE:
             return tokens
         tnode = tnode.rstrip('\n')
-        words = re.split('\s+', tnode)
+        words = re.split('\s+(?![:!])', tnode) # split at space, but not (?! ... ) when followed by some characters; here, : and ! (Latin-specific convention)
         # Filter out any blank spaces at the end (but not at the beginning! We may need the
         # empty token to close out a 'continue' token that ends the outer layer.)
         join_last = True
