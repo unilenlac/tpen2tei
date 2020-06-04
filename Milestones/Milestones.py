@@ -16,7 +16,6 @@ try:
 except EnvironmentError:
     print("ERROR File Not Found: %s" % milestone_file)
 
-
 # ABBREVIATIONS
 abbr_file = "abbr.csv"
 abbr_table = []
@@ -27,11 +26,25 @@ try:
         for row in reader:
             abbr_table.append(row)
         print("Found " + str(len(abbr_table)) + " entries in the abbreviation expansion table (" + abbr_file + ")")
-
-        string = "".join(item['abbr'] + "->" + item['expan'] + "\n" for item in abbr_table) #item['abbr'] + "->" + item['expan']
+        # string = "".join(item['abbr'] + "->" + item['expan'] + "\n" for item in abbr_table) #item['abbr'] + "->" + item['expan']
         #print(string)
 except IOError:
     print("Warning: No abreviation-expansion file found (Expected file: <" + abbr_file + ">). Proceeding without...");
+
+# NEUTRALISATION (character correspondence applied to normal form)
+neutr_file = "neutr.csv"
+neutr_table = []
+
+try:
+    with open(neutr_file, 'rt', encoding='utf-8-sig') as csvfile: #sig <-> BOM
+        reader = csv.DictReader(csvfile, delimiter = ';')
+        for row in reader:
+            neutr_table.append(row)
+        print("Found " + str(len(neutr_table)) + " entries in the neutralisation table (" + neutr_file + ")")
+        # string = "".join("\n" + item['LHS'] + "->" + item['RHS'] for item in neutr_table)
+        # print(string)
+except IOError:
+    print("Warning: No neutralisation file found (Expected file: <" + neutr_file + ">). Proceeding without...");
 
 def remove_diacritics(input_str):
     #nfkd_form = unicodedata.normalize('NFKD', input_str)
@@ -62,6 +75,14 @@ def expand_abbr(input_str):
             return row['expan']
     return input_str
 
+def neutralise(input_str):
+    def translate(char):
+        for item in neutr_table:
+            if (char == item['LHS']):
+                return item['RHS']
+        return char;
+    return "".join(translate(ch) for ch in input_str)
+
 def normalise(token):
     if not 'n' in token or token["n"] is None:
         if 't' in token:
@@ -75,6 +96,8 @@ def normalise(token):
         token["n"] = expand_abbr(token["n"])
         # now, normalise the expansion!
         token["n"] = lowercase_noacc_nopunct(token["n"]);
+
+    token["n"] = neutralise(token["n"]);
 
     #avoid Empty token error in CollateX
     if (token["n"] == ""):
@@ -130,3 +153,5 @@ def display_char_names(input_str):
 # επ αυτον
 # print(lowercase_noacc_nopunct("ἐφ’ἐστῶτα"))
 # εφεστωτα
+#
+# print(neutralise("æ"))
