@@ -87,7 +87,7 @@ def normalise(token):
     if not 'n' in token or token["n"] is None:
         if 't' in token:
             token["n"] = token["t"]
-    token["n"] = lowercase_noacc_nopunct(token["n"])
+    token["n"] = lowercase_noacc_nopunct(token["n"]).strip();
     #token["n"] = remove_diacritics(token["t"]);
 
     #if abbr
