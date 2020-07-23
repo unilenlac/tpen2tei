@@ -556,7 +556,9 @@ def getSingletonNormalForm(element):
         for child in element:
             output = output + getSingletonNormalForm(child)
             if child.tail:
-                output = output + child.tail.strip()
+                toAdd = re.sub('\s+', ' ', child.tail);
+                if len(toAdd.strip()):
+                    output = output + toAdd;                
         if len(output):
             return output
 
