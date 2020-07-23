@@ -121,6 +121,7 @@ class Tokenizer:
             _tag_is(element, 'add') or \
             _tag_is(element, 'choice') or \
             _tag_is(element, 'del') or \
+            _tag_is(element, 'gap') or \
             _tag_is(element, 'handShift') or \
             _tag_is(element, 'note') or \
             _tag_is(element, 'seg') or \
@@ -530,7 +531,7 @@ def getSingletonNormalForm(element):
                     return '[' + getSingletonNormalForm(child) + ']'
                 break
 
-    #UNCLEAR: if no alternative is supplied, add as many '?' placeholders as there are missing chars
+    #UNCLEAR: if no alternative is supplied, add as many placeholders as there are missing chars
     elif _tag_is(element, 'unclear'):
         #if parent is not CHOICE
         if not _tag_is(element.getparent(), 'choice'):
@@ -539,6 +540,16 @@ def getSingletonNormalForm(element):
             if element.get('quantity'):
                 counterReplacementChar = int(element.get('quantity'))
             return replacementChar * counterReplacementChar
+
+    #GAP: add as many placeholders as there are missing chars
+    elif _tag_is(element, 'gap'):
+        replacementChar = '␣'
+        counterReplacementChar = 1
+        if element.get('quantity'):
+            counterReplacementChar = int(element.get('quantity'))
+        if element.get('atLeast'):
+            counterReplacementChar = int(element.get('atLeast'))
+        return replacementChar * counterReplacementChar
 
     else:
         # recursive treatment
