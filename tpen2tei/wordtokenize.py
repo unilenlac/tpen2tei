@@ -208,7 +208,7 @@ class Tokenizer:
                         prior['t'] += partial['t']
                         prior['n'] += partial['n']
                         # Now figure out 'lit'. Did the child have children?
-                        if child.text is None and len(child) == 0:
+                        if child.text is None and len(child) == 0 and not _tag_is(child, 'gap'):
                             # It's a milestone element. Stick it into 'lit'.
                             prior['lit'] += _shortform(etree.tostring(child, encoding='unicode', with_tail=False))
                         prior['lit'] += partial['lit']
