@@ -271,6 +271,7 @@ class Tokenizer:
         if element.tail is not None:
             # Strip any insignificant whitespace from the tail.
             tnode = element.tail
+            if re.match('.*\}[clp]b$', str(element.tag)) or _tag_is(element, 'div'):
                 tnode = re.sub('^[\s\n]*', '', element.tail, re.S)
             if tnode != '':
                 self._split_text_node(element, tnode, tokens)
@@ -528,7 +529,7 @@ def getSingletonNormalForm(element):
             if child.tail:
                 toAdd = re.sub('\s+', ' ', child.tail);
                 if len(toAdd.strip()):
-                    output = output + toAdd;                
+                    output = output + toAdd;
         if len(output):
             return output
 
