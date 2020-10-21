@@ -271,7 +271,6 @@ class Tokenizer:
         if element.tail is not None:
             # Strip any insignificant whitespace from the tail.
             tnode = element.tail
-            if re.match('.*\}[clp]b$', str(element.tag)):
                 tnode = re.sub('^[\s\n]*', '', element.tail, re.S)
             if tnode != '':
                 self._split_text_node(element, tnode, tokens)
