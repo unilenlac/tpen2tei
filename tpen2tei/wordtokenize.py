@@ -196,6 +196,8 @@ class Tokenizer:
                         if 'continue' not in partial:
                             del prior['continue']
                     except etree.XMLSyntaxError:
+                        # print("Impossible to merge tokens: ", tokens[-1]['lit'], " and ", child_tokens[0]['lit'])
+                        del tokens[-1]['continue']                        
                         pass
                 # Add the remaining tokens onto our list.
                 tokens.extend(child_tokens)
