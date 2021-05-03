@@ -93,6 +93,12 @@ class Tokenizer:
 
         # Back to the top level: remove any empty tokens that were left over
         # in case they were needed to close a seemingly incomplete word.
+        if len(tokens) > 1:
+            for i in range(len(tokens) - 1):
+                if _is_blank(tokens[i]) and tokens[i]['lit']:
+                    # preserve lit (of token to be deleted) in next token
+                    tokens[i+1]['lit'] = tokens[i]['lit'] + tokens[i+1]['lit'];
+
         tokens = [t for t in tokens if not _is_blank(t)]
 
         # Now go through all the tokens and apply our function, if any, to normalise
@@ -129,10 +135,12 @@ class Tokenizer:
             _tag_is(element, 'subst') or \
             _tag_is(element, 'unclear'));
 
+        manusIntervention = False # do we have a scribal intervention by hand=manus (early hand, as opposed to corr, later hand)?
         # special treatment: confirm on a tag by tag basis depending on details
         # ADD: if hand is one of 'manus...', then default treatment
         if _tag_is(element, 'add') and element.get('hand') and 'manus' in element.get('hand'):
             treatAsSingleton = False
+            manusIntervention = True
 
         # SUBST: if there is no 'type' attribute, then treat as ADD
         elif _tag_is(element, 'subst') and not element.get('type'):
@@ -141,6 +149,7 @@ class Tokenizer:
                         and child.get('hand') \
                         and 'manus' in child.get('hand'):
                     treatAsSingleton = False
+                    manusIntervention = True
                     break
 
         # First handle the text of the element, if any
@@ -265,6 +274,14 @@ class Tokenizer:
         if tempSkip.tail is not None:
             if len(tokens) and not tempSkip.tail[0].isspace():
                  tokens[-1]['continue'] = True
+
+        if manusIntervention and not singlewordelement:
+            # inject opening/closing tag in first/last token, respectively. But not for sigle words, already having full lit
+            xmlCode = _shortform(etree.tostring(element, encoding='unicode', with_tail=False))
+            leftxmlCode = xmlCode[:xmlCode.find(">") + 1];
+            rightxmlCode = xmlCode[xmlCode.rfind("<"):];
+            tokens[0]['lit'] = leftxmlCode + tokens[0]['lit'];
+            tokens[-1]['lit'] += rightxmlCode;
 
         # Finally handle the tail text of this element, if any.
         # Our XML context is now the element's parent.
