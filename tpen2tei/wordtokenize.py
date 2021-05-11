@@ -132,6 +132,7 @@ class Tokenizer:
             _tag_is(element, 'note') or \
             _tag_is(element, 'seg') or \
             _tag_is(element, 'sic') or \
+            _tag_is(element, 'space') or \
             _tag_is(element, 'subst') or \
             _tag_is(element, 'unclear'));
 
