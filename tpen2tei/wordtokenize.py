@@ -180,25 +180,19 @@ class Tokenizer:
                     continue
                 if len(tokens) and 'continue' in tokens[-1]:
                     # Try to combine the last of these with the first child token.
-                    combolit = "<word>%s</word>" % (tokens[-1]['lit'] + child_tokens[0]['lit'])
-                    try:
-                        etree.fromstring(combolit)
-                        # If this didn't cause an exception, merge the tokens
-                        prior = tokens[-1]
-                        partial = child_tokens.pop(0)
-                        prior['t'] += partial['t']
-                        prior['n'] += partial['n']
-                        # Now figure out 'lit'. Did the child have children?
-                        if child.text is None and len(child) == 0 and not _tag_is(child, 'gap'):
-                            # It's a milestone element. Stick it into 'lit'.
-                            prior['lit'] += _shortform(etree.tostring(child, encoding='unicode', with_tail=False))
-                        prior['lit'] += partial['lit']
-                        if 'continue' not in partial:
-                            del prior['continue']
-                    except etree.XMLSyntaxError:
-                        # print("Impossible to merge tokens: ", tokens[-1]['lit'], " and ", child_tokens[0]['lit'])
-                        del tokens[-1]['continue']                        
-                        pass
+
+                    prior = tokens[-1]
+                    partial = child_tokens.pop(0)
+                    prior['t'] += partial['t']
+                    prior['n'] += partial['n']
+                    # Now figure out 'lit'. Did the child have children?
+                    if child.text is None and len(child) == 0 and not _tag_is(child, 'gap'):
+                        # It's a milestone element. Stick it into 'lit'.
+                        prior['lit'] += _shortform(etree.tostring(child, encoding='unicode', with_tail=False))
+                    prior['lit'] += partial['lit']
+                    if 'continue' not in partial:
+                        del prior['continue']
+
                 # Add the remaining tokens onto our list.
                 tokens.extend(child_tokens)
 
