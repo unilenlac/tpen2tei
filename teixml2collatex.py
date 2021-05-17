@@ -42,7 +42,7 @@ def unfinished(configmod):
     return []
 
 
-def teixml2collatex(milestone, indir, verbose, configmod):
+def teixml2collatex(index, milestone, indir, verbose, configmod):
     # list elements are already so
     # that collatex can digest them
     witnesses = []
@@ -73,6 +73,10 @@ def teixml2collatex(milestone, indir, verbose, configmod):
         witness = extract_witness(indir + '/' + infile, milestone, normalise(configmod))
 
         if witness is not None and witness.get('tokens'):
+            if index == 0 and len(witness.get('tokens')) > 0: # first milestone; prepend lit to first token
+                witness.get('tokens')[0]['lit'] = witness.get('preMilestone') + witness.get('tokens')[0]['lit']
+            if witness.get('preMilestone'):
+                del witness['preMilestone']
             # for t in witness.get('tokens'):
             #     print(t)
             #     print(len(t['t']))
@@ -180,8 +184,8 @@ if __name__ == '__main__':
         sys.path.append(os.path.dirname(configpath))
         configmod = importlib.import_module(os.path.basename(configpath))
 
-    for milestone in milestones(configmod):
-        c = teixml2collatex(milestone, args.indir, args.verbose, configmod)
+    for idx, milestone in enumerate(milestones(configmod)):
+        c = teixml2collatex(idx, milestone, args.indir, args.verbose, configmod)
         if c.get ('witnesses'):
             outfile = '%s/milestone-%s.json' % (args.outdir, milestone)
 

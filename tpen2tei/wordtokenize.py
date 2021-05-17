@@ -45,6 +45,8 @@ class Tokenizer:
         self.id_xpath = id_xpath
         if block_xpath is not None:
             self.block_xpath = block_xpath
+        self.milestoneHit = False
+        self.preMilestone = ''
 
     def from_file(self, xmlfile, encoding='utf-8'):
         with open(xmlfile, encoding=encoding) as fh:
@@ -115,7 +117,7 @@ class Tokenizer:
         if len(tokens) > 0 and 'continue' in tokens[-1]:
             del tokens[-1]['continue']
 
-        return {'id': sigil, 'tokens': tokens}
+        return {'id': sigil, 'tokens': tokens, 'preMilestone': self.preMilestone}
 
     def _find_words(self, element, first_layer=False):
         """Detect word boundaries and add an anchor to each."""
@@ -201,12 +203,23 @@ class Tokenizer:
         # have been processed but before the tail is processed.
         # First, are we in the milestone we want?
         if _tag_is(element, 'milestone'):
+            self.milestoneHit = True
             if element.get('n') == self.MILESTONE:
                 self.INMILESTONE = True
+                xmlCode = _shortform(etree.tostring(element, encoding='unicode', with_tail=False))
+                emptytoken = {'t': '', 'n': '', 'lit': xmlCode}
+                tokens.append(emptytoken)
             elif self.MILESTONE is not None:
                 self.INMILESTONE = False
+        if not self.milestoneHit:
+            self.preMilestone += _shortform(etree.tostring(element, encoding='unicode', with_tail=False))
         if not self.INMILESTONE:
             return tokens
+
+        if _tag_is(element, 'cb') or _tag_is(element, 'pb'):
+            xmlCode = _shortform(etree.tostring(element, encoding='unicode', with_tail=False))
+            emptytoken = {'t': '', 'n': '', 'lit': xmlCode}
+            tokens.append(emptytoken)
 
         # Move on with life
 
@@ -296,6 +309,8 @@ class Tokenizer:
 
         # Get rid of any final empty tokens, if there are preceding tokens.
         if len(tokens) > 1 and _is_blank(tokens[-1]):
+            if tokens[-1]['lit']:
+                tokens[-2]['lit'] += tokens[-1]['lit'];
             tokens.pop()
 
         if treatAsSingleton:
