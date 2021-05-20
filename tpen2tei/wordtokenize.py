@@ -189,7 +189,7 @@ class Tokenizer:
                     prior['t'] += partial['t']
                     prior['n'] += partial['n']
                     # Now figure out 'lit'. Did the child have children?
-                    if child.text is None and len(child) == 0 and not _tag_is(child, 'gap'):
+                    if child.text is None and len(child) == 0 and not _tag_is(child, 'gap') and not _tag_is(child, 'lb'):
                         # It's a milestone element. Stick it into 'lit'.
                         prior['lit'] += _shortform(etree.tostring(child, encoding='unicode', with_tail=False))
                     prior['lit'] += partial['lit']
@@ -216,7 +216,7 @@ class Tokenizer:
         if not self.INMILESTONE:
             return tokens
 
-        if _tag_is(element, 'cb') or _tag_is(element, 'pb'):
+        if _tag_is(element, 'cb') or _tag_is(element, 'pb') or _tag_is(element, 'lb'):
             xmlCode = _shortform(etree.tostring(element, encoding='unicode', with_tail=False))
             emptytoken = {'t': '', 'n': '', 'lit': xmlCode}
             tokens.append(emptytoken)
