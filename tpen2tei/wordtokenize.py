@@ -285,7 +285,7 @@ class Tokenizer:
             if len(tokens) and not tempSkip.tail[0].isspace():
                  tokens[-1]['continue'] = True
 
-        if manusIntervention and not singlewordelement:
+        if (manusIntervention and not singlewordelement) or (_tag_is(element, 'p')):
             # inject opening/closing tag in first/last token, respectively. But not for sigle words, already having full lit
             xmlCode = _shortform(etree.tostring(element, encoding='unicode', with_tail=False))
             leftxmlCode = xmlCode[:xmlCode.find(">") + 1];
@@ -304,6 +304,14 @@ class Tokenizer:
                 self._split_text_node(element, tnode, tokens)
             # Set the outer context on all the new tokens created
             for t in tokens:
+                if t['t'] == "@p@":
+                    t['t'] = '';
+                    t['n'] = '';
+                    t['lit'] = '<p>';
+                if t['t'] == "@/p@":
+                    t['t'] = '';
+                    t['n'] = '';
+                    t['lit'] = '</p>';
                 if 'context' not in t:
                     t['context'] = parentcontext
 
